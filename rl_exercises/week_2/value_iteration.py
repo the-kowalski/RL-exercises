@@ -65,13 +65,19 @@ class ValueIteration(AbstractAgent):
             return
 
         # TODO: Call value_iteration() with the MDP components
-        V_opt, pi_opt = None, None  # placeholder
+        # Done
+        V_opt, pi_opt = value_iteration(
+            T=self.T,
+            R_sa=self.R_sa,
+            gamma=self.gamma,
+            seed=self.seed,
+        )
 
         self.V = V_opt
         self.pi = pi_opt
         printr("Converged V:", self.V)
         printr("Derived policy π:", self.pi)
-        # self.policy_fitted = True # TODO: uncomment this after implementation
+        self.policy_fitted = True  # TODO: uncomment this after implementation
 
     def predict_action(
         self,
@@ -84,7 +90,9 @@ class ValueIteration(AbstractAgent):
             self.update_agent()
 
         # TODO: Return action from learned policy
-        raise NotImplementedError("predict_action() is not implemented.")
+        # Done
+        selected_action = self.pi[observation]
+        return selected_action, info
 
 
 def value_iteration(
@@ -124,11 +132,41 @@ def value_iteration(
     """
     n_states, n_actions = R_sa.shape
     V = np.zeros(n_states, dtype=float)
-    # rng = np.random.default_rng(seed)  uncomment this
+    rng = np.random.default_rng(seed)
     pi = None
 
     # TODO: update V using the Q values until convergence
+    # Done
+
+    while True:
+        V_old = V.copy()
+
+        for s in range(n_states):
+            action_values = np.zeros(n_actions)
+            for a in range(n_actions):
+                action_value = 0
+                for s_next in range(n_states):
+                    action_value += T[s, a, s_next] * V[s_next]
+                action_values[a] = R_sa[s, a] + gamma * action_value
+            max_index = np.argmax(action_values)
+            V[s] = action_values[max_index]
+
+        if abs(V.sum() - V_old.sum()) < epsilon:
+            break
 
     # TODO: Extract the greedy policy from V and update pi
+    # Done
+
+    pi = np.zeros(n_states, dtype=int)
+
+    for s in range(n_states):
+        action_values = np.zeros(n_actions)
+        for a in range(n_actions):
+            action_value = 0
+            for s_next in range(n_states):
+                action_value += T[s, a, s_next] * V[s_next]
+            action_values[a] = R_sa[s, a] + gamma * action_value
+        max_index = np.argmax(action_values)
+        pi[s] = max_index
 
     return V, pi
