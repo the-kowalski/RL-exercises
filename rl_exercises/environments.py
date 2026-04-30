@@ -239,7 +239,7 @@ class MarsRover(gym.Env):
         for s in range(nS):
             for a in range(nA):
                 next_state = self.get_next_state(s, a)
-                T[s, a, next_state] = 1.0
+                T[s, a, next_state] = P[s, a]
 
         return T
 
