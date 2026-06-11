@@ -59,8 +59,6 @@ class ReplayBuffer(AbstractBuffer):
         """
         if len(self.states) >= self.capacity:
             # TODO: pop the oldest element off each list (states, actions, …, infos)
-            # pop oldest
-            # return
             self.states.pop(0)
             self.actions.pop(0)
             self.rewards.pop(0)
@@ -70,7 +68,7 @@ class ReplayBuffer(AbstractBuffer):
 
         # TODO: append state, action, reward, next_state, done, info to their respective lists
         self.states.append(state)
-        self.actions.append(action)
+        self.actions.append(int(action))
         self.rewards.append(reward)
         self.next_states.append(next_state)
         self.dones.append(done)
@@ -92,7 +90,6 @@ class ReplayBuffer(AbstractBuffer):
         List of transitions as (state, action, reward, next_state, done, info).
         """
         # TODO: randomly choose `batch_size` unique indices from [0, len(self.states))
-        # idx = ...
         idxs = np.random.choice(len(self.states), batch_size, replace=False)
         return [
             (
